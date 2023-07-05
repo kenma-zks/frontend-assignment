@@ -1,15 +1,42 @@
 import { useQuery } from "react-query";
 import ProductCard from "../components/ProductCard";
-import { getProduct } from "../api/api";
+import { getCategory, getProduct } from "../api/api";
 import { IProductData } from "../types/types";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { setSelectedProduct } from "../store/productsSlice";
+import { useAppDispatch } from "../store/hooks";
 
 const Home = () => {
-  const { data, isLoading, isError } = useQuery({
+  const [selectedCategory, setSelectedCategory] =
+    useState<string>("electronics");
+
+  const dispatch = useAppDispatch();
+
+  const {
+    data: productData,
+    isLoading: productLoading,
+    isError: productError,
+  } = useQuery({
     queryKey: ["products"],
     queryFn: getProduct,
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  const {
+    data: categoryData,
+    isLoading: categoryLoading,
+    isError: categoryError,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: getCategory,
+  });
+
+  if (productLoading || categoryLoading) return <div>Loading...</div>;
+  if (productError || categoryError) return <div>Error fetching data</div>;
+
+  const filteredProducts = productData.filter((product: IProductData) => {
+    return product.category === selectedCategory;
+  });
 
   return (
     <div className="flex flex-grow w-full">
@@ -34,56 +61,35 @@ const Home = () => {
             </div>
             <div className="pt-4">
               <div className="space-y-4">
-                <div className="flex items-center">
-                  <input
-                    value="white"
-                    type="checkbox"
-                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label className="ml-3 text-sm font-normal text-gray-500">
-                    Electronics
+                {categoryData.map((category: string) => (
+                  <label className="flex items-center" key={category}>
+                    <input
+                      type="checkbox"
+                      className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                      checked={selectedCategory === category}
+                      onChange={() => setSelectedCategory(category)}
+                    />
+                    <span className="ml-3 text-sm font-normal text-gray-500 cursor-pointer">
+                      {category}
+                    </span>
                   </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    value="white"
-                    type="checkbox"
-                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label className="ml-3 text-sm font-normal text-gray-500">
-                    Jewelery
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    value="white"
-                    type="checkbox"
-                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label className="ml-3 text-sm font-normal text-gray-500">
-                    Men's Clothing
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    value="white"
-                    type="checkbox"
-                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <label className="ml-3 text-sm font-normal text-gray-500">
-                    Women's Clothing
-                  </label>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center w-3/4 h-full pl-2 pr-5 py-5 bg-[#FCFBFC] rounded-md">
-        <div className="flex flex-col flex-grow items-center justify-center w-full h-1/4 bg-white border border-gray-500 shadow-sm rounded-md">
-          <div className="flex flex-row flex-wrap gap-8 w-full justify-start px-5 py-4 flex-grow">
-            {data.map((product: IProductData) => (
-              <ProductCard product={product} />
+      <div className="flex flex-col items-center w-3/4 pl-2 pr-5 py-5 bg-[#FCFBFC] rounded-md">
+        <div className="flex flex-col flex-grow justify-start w-full bg-white border border-gray-500 shadow-sm rounded-md">
+          <div className="flex flex-row flex-wrap gap-4 w-full justify-start px-5 py-4">
+            {filteredProducts.map((product: IProductData) => (
+              <Link
+                to={`/product/${product.id}`}
+                key={product.id}
+                onClick={() => dispatch(setSelectedProduct(product))}
+              >
+                <ProductCard key={product.id} product={product} />
+              </Link>
             ))}
           </div>
         </div>
