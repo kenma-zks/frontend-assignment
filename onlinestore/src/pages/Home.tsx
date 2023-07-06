@@ -50,10 +50,10 @@ const Home = () => {
   }
 
   return (
-    <div className="flex flex-grow w-full">
-      <div className="flex flex-col items-center w-1/4 h-full pl-6 pr-2 py-5 bg-[#FCFBFC] rounder-md ">
+    <div className="flex flex-grow w-full md:flex-row flex-col">
+      <div className="flex flex-col items-center w-full md:w-1/4 p-6 h-80 md:h-96 md:pl-6 md:pr-2 py-5 bg-[#FCFBFC] rounder-md ">
         <div className="flex flex-col flex-grow items-center justify-center w-full h-1/4 bg-white border border-gray-500 shadow-sm rounded-md">
-          <div className="flex flex-col w-full justify-start px-5 text-xl pt-3 font-semibold flex-grow">
+          <div className="flex flex-col  w-full justify-start px-5 text-xl pt-3 font-semibold flex-grow">
             <p className="w-full ">Filters</p>
             <div className="flex w-full items-center justify-between pt-4">
               <p className="w-full text-sm ">Category</p>
@@ -101,7 +101,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-center w-3/4 pl-2 pr-5 py-5 bg-[#FCFBFC] rounded-md">
+      <div className="flex flex-col items-center md:justify-center w-full md:w-3/4 p-6 md:pl-2 md:pr-5 md:py-5 bg-[#FCFBFC] rounded-md">
         <div className="flex flex-col flex-grow justify-start w-full bg-white border border-gray-500 shadow-sm rounded-md">
           {filteredProducts.length > 0 ? (
             <div className="flex flex-row flex-wrap gap-4 w-full justify-start px-5 py-4">

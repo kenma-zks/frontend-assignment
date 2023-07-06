@@ -30,7 +30,7 @@ const Header = () => {
       <div className="flex items-center justify-between sticky top-0 z-30 left-0 bg-white px-5 h-16 shadow-sm border-b border-gray-300">
         <div className="flex items-center">
           <Link to="/">
-            <img src={logo} alt="logo" className="pl-12" />
+            <img src={logo} alt="logo" className="md:pl-12" />
           </Link>
         </div>
         <div className="flex w-2/3 items-center gap-6 justify-end relative">

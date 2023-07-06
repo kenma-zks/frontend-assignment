@@ -15,7 +15,7 @@ const Searchbar = ({
   };
 
   return (
-    <form className="relative w-1/3 h-10 rounded-full border border-gray-400">
+    <form className="relative w-full md:w-1/3 h-10 rounded-full border border-gray-400">
       <input
         type="text"
         placeholder="Search Product"

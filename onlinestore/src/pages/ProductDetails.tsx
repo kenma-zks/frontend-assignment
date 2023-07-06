@@ -67,7 +67,6 @@ const ProductDetails = () => {
     });
   };
 
-  console.log(quantity);
   const renderRatingStars = () => {
     const stars = [];
     const rating = product.rating.rate;
@@ -96,14 +95,15 @@ const ProductDetails = () => {
         <div className="flex flex-row justify-start w-full h-full ">
           <div className="flex flex-row items-center justify-start gap-2 w-full px-5 py-4 font-semibold">
             <Link to="/">
-              <p className="text-sm text-gray-500 ">{product?.category}</p>
+              <p className="text-xs md:text-sm text-gray-500 ">Home</p>
             </Link>
-            /<p className="text-sm ">{product?.title}</p>
+            /<p className="text-xs md:text-sm ">{product?.category}</p>/
+            <p className="text-xs md:text-sm ">{product?.title}</p>
           </div>
         </div>
       </div>
-      <div className="flex flex-grow w-full items-center">
-        <div className="flex flex-col items-center w-1/4 h-full">
+      <div className="flex flex-col md:flex-row flex-grow w-full items-center">
+        <div className="flex flex-col items-center w-full md:w-1/4 h-full">
           <div className="flex flex-col items-center w-full mt-12">
             <img
               src={product?.image}
@@ -112,7 +112,7 @@ const ProductDetails = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col items-center w-2/4 h-full ">
+        <div className="flex flex-col items-center w-full md:w-2/4 h-full ">
           <div className="flex flex-col items-start justify-start w-full pl-4 pr-4">
             <p className="text-xl font-semibold pt-2 text-[#8A8888]">
               {product?.title}
@@ -140,7 +140,7 @@ const ProductDetails = () => {
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-start justify-start w-1/5 px-8 h-full ">
+        <div className="flex flex-col items-start justify-start w-full max-w-[300px] px-8 h-full ">
           <div className="flex flex-col items-start justify-start w-full p-4 border      border-black rounded-lg">
             <p className="text-md font-semibold pb-2 ">Set Quantity</p>
             <div className="py-2 flex items-center h-8 border border-black w-32 justify-between">
@@ -194,7 +194,7 @@ const ProductDetails = () => {
               </div>
             </div>
             <button
-              className="w-full h-10 p-3 bg-black text-white text-xs font-semibold rounded-lg flex justify-center items-center"
+              className="w-full h-10 p-3 bg-orange-500 text-white text-xs font-semibold rounded-lg flex justify-center items-center"
               onClick={addToCartHandler}
             >
               Add to Cart

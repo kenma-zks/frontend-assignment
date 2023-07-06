@@ -59,7 +59,7 @@ const CartDrawer = ({ onClose }: { onClose: () => void }) => {
   return (
     <>
       <div className="fixed inset-0 bg-gray-500 bg-opacity-50 backdrop-filter backdrop-blur-xs z-40" />
-      <div className="fixed inset-y-0 right-0 h-screen w-1/4 bg-white shadow-md flex flex-col z-50">
+      <div className="fixed inset-y-0 right-0 h-screen w-full md:w-1/3 lg:w-1/4 bg-white shadow-md flex flex-col z-50">
         <div className="flex flex-col h-12">
           <div className="flex items-center justify-between px-5 h-16 border-b border-gray-300">
             <p className="text-lg font-semibold">Cart</p>
