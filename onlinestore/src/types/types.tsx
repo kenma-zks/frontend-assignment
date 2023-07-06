@@ -5,10 +5,14 @@ export interface IProductData {
   category: string;
   description: string;
   image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
 }
 
 export interface ICartData {
-  id?: number;
+  id: number;
   title: string;
   price: number;
   image: string;

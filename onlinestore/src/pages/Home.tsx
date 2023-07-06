@@ -5,13 +5,14 @@ import { IProductData } from "../types/types";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { setSelectedProduct } from "../store/productsSlice";
-import { useAppDispatch } from "../store/hooks";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import Loading from "../components/Loading";
 
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] =
-    useState<string>("electronics");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const dispatch = useAppDispatch();
+  const searchQuery = useAppSelector((state) => state.search);
 
   const {
     data: productData,
@@ -31,12 +32,22 @@ const Home = () => {
     queryFn: getCategory,
   });
 
-  if (productLoading || categoryLoading) return <div>Loading...</div>;
+  if (productLoading || categoryLoading) return <Loading />;
   if (productError || categoryError) return <div>Error fetching data</div>;
 
-  const filteredProducts = productData.filter((product: IProductData) => {
-    return product.category === selectedCategory;
-  });
+  let filteredProducts = productData;
+
+  if (selectedCategory !== "all") {
+    filteredProducts = filteredProducts.filter((product: IProductData) => {
+      return product.category === selectedCategory;
+    });
+  }
+
+  if (searchQuery) {
+    filteredProducts = filteredProducts.filter((product: IProductData) => {
+      return product.title.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  }
 
   return (
     <div className="flex flex-grow w-full">
@@ -61,6 +72,17 @@ const Home = () => {
             </div>
             <div className="pt-4">
               <div className="space-y-4">
+                <label className="flex items-center" key="all">
+                  <input
+                    type="checkbox"
+                    className="h-3 w-3 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                    checked={selectedCategory === "all"}
+                    onChange={() => setSelectedCategory("all")}
+                  />
+                  <span className="ml-3 text-sm font-normal text-gray-500 cursor-pointer">
+                    All
+                  </span>
+                </label>
                 {categoryData.map((category: string) => (
                   <label className="flex items-center" key={category}>
                     <input
@@ -81,17 +103,23 @@ const Home = () => {
       </div>
       <div className="flex flex-col items-center w-3/4 pl-2 pr-5 py-5 bg-[#FCFBFC] rounded-md">
         <div className="flex flex-col flex-grow justify-start w-full bg-white border border-gray-500 shadow-sm rounded-md">
-          <div className="flex flex-row flex-wrap gap-4 w-full justify-start px-5 py-4">
-            {filteredProducts.map((product: IProductData) => (
-              <Link
-                to={`/product/${product.id}`}
-                key={product.id}
-                onClick={() => dispatch(setSelectedProduct(product))}
-              >
-                <ProductCard key={product.id} product={product} />
-              </Link>
-            ))}
-          </div>
+          {filteredProducts.length > 0 ? (
+            <div className="flex flex-row flex-wrap gap-4 w-full justify-start px-5 py-4">
+              {filteredProducts.map((product: IProductData) => (
+                <Link
+                  to={`/product/${product.id}`}
+                  key={product.id}
+                  onClick={() => dispatch(setSelectedProduct(product))}
+                >
+                  <ProductCard key={product.id} product={product} />
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <p className="text-2xl font-semibold">No products found 😔</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

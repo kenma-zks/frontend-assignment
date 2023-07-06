@@ -5,6 +5,9 @@ import { ICartData } from "../types/types";
 import { getSingleProduct } from "../api/api";
 import { useQuery } from "react-query";
 import { useAppDispatch } from "../store/hooks";
+import Loading from "../components/Loading";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -21,7 +24,7 @@ const ProductDetails = () => {
     queryFn: () => getSingleProduct(id),
   });
 
-  if (productLoading) return <div>Loading...</div>;
+  if (productLoading) return <Loading />;
 
   if (productError) return <div>Error fetching data</div>;
 
@@ -49,10 +52,43 @@ const ProductDetails = () => {
 
       dispatch(addToCart(cartItem));
       console.log(cartItem);
+
+      toast.success("Item added to cart", {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 2000,
+      });
     }
   };
 
+  const buyNowHandler = () => {
+    toast.success("Item bought successfully", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+    });
+  };
+
   console.log(quantity);
+  const renderRatingStars = () => {
+    const stars = [];
+    const rating = product.rating.rate;
+    for (let i = 0; i < 5; i++) {
+      const starClass = i <= rating ? "text-yellow-400" : "text-gray-300";
+      stars.push(
+        <svg
+          key={i}
+          className={`w-4 h-4 fill-current ${starClass}`}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 15.585L3.535 19.9l1.065-6.203L.293 7.115l6.257-.91L10 0l3.45 6.205 6.257.91-4.307 4.582 1.064 6.203z"
+          />
+        </svg>
+      );
+    }
+    return stars;
+  };
 
   return (
     <div className="w-full h-full flex flex-col">
@@ -71,7 +107,7 @@ const ProductDetails = () => {
           <div className="flex flex-col items-center w-full mt-12">
             <img
               src={product?.image}
-              alt=""
+              alt={product?.title}
               className="w-64 h-64 object-contain"
             />
           </div>
@@ -81,6 +117,14 @@ const ProductDetails = () => {
             <p className="text-xl font-semibold pt-2 text-[#8A8888]">
               {product?.title}
             </p>
+            <div className="flex flex-row w-full pt-1 2">
+              <div className="flex items-center">
+                {renderRatingStars()}
+                <p className="text-sm font-semibold ml-2">
+                  {product.rating.rate}
+                </p>
+              </div>
+            </div>
             <p className="text-2xl font-semibold pt-2">$ {product?.price}</p>
             <div className="w-full bg-gray-400 h-px mt-3 " />
           </div>
@@ -145,7 +189,7 @@ const ProductDetails = () => {
               <div className="flex flex-row items-center justify-between w-full">
                 <p className="text-md font-semibold text-[#8C8F94]">Total</p>
                 <p className="text-lg font-semibold ">
-                  ${product?.price ? product.price * quantity : 0}
+                  ${(product?.price ? product.price * quantity : 0).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -155,12 +199,16 @@ const ProductDetails = () => {
             >
               Add to Cart
             </button>
-            <button className="w-full h-10 p-3 bg-white text-black text-xs font-semibold rounded-lg mt-2 border border-black flex justify-center items-center">
+            <button
+              className="w-full h-10 p-3 bg-white text-black text-xs font-semibold rounded-lg mt-2 border border-black flex justify-center items-center"
+              onClick={buyNowHandler}
+            >
               Buy Now
             </button>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

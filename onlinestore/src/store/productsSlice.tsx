@@ -3,10 +3,12 @@ import { IProductData } from "../types/types";
 
 interface ProductsState {
   selectedProduct: IProductData | null;
+  products: IProductData[];
 }
 
 const initialState: ProductsState = {
   selectedProduct: null,
+  products: [],
 };
 
 const productsSlice = createSlice({

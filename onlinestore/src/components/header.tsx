@@ -4,10 +4,13 @@ import Searchbar from "./Searchbar";
 import { FiShoppingCart } from "react-icons/fi";
 import { useState } from "react";
 import CartDrawer from "./CartDrawer";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store/store";
+import { setSearchQuery } from "../store/searchSlice";
 
 const Header = () => {
+  const dispatch = useDispatch();
+
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
 
   const totalQuantity = useSelector(
@@ -16,6 +19,10 @@ const Header = () => {
 
   const handleCloseCart = () => {
     setIsCartOpen(false);
+  };
+
+  const handleSearch = (searchQuery: string) => {
+    dispatch(setSearchQuery(searchQuery));
   };
 
   return (
@@ -27,7 +34,8 @@ const Header = () => {
           </Link>
         </div>
         <div className="flex w-2/3 items-center gap-6 justify-end relative">
-          <Searchbar />
+          <Searchbar onSubmit={handleSearch} />
+
           <FiShoppingCart
             className="h-5 w-5 mr-6 hover:cursor-pointer"
             onClick={() => setIsCartOpen((prev) => !prev)}

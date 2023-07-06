@@ -1,8 +1,9 @@
 import { FiX } from "react-icons/fi";
-import { useState } from "react";
 import { ICartData } from "../types/types";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { addToCart, removeFromCart } from "../store/cartSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface RootState {
   cart: {
@@ -22,29 +23,37 @@ const CartDrawer = ({ onClose }: { onClose: () => void }) => {
 
   console.log(cartData);
 
-  const [quantity, setQuantity] = useState<number>(1);
-
-  const addToCartHandler = () => {
-    if (cartData && cartData.items && cartData.items.length > 0) {
-      const selectedItem = cartData.items[0]; // Assuming you want to access the first item in the array
-      const totalPrice = selectedItem.price * quantity;
-
-      const cartItem: ICartData = {
-        id: selectedItem.id,
-        title: selectedItem.title,
-        price: selectedItem.price,
-        image: selectedItem.image,
-        quantity: quantity,
-        totalPrice: totalPrice ?? 0,
-      };
-
-      dispatch(addToCart(cartItem));
-      console.log(cartItem);
+  const addToCartHandler = (
+    id: number,
+    title: string,
+    price: number,
+    image: string,
+    quantity: number,
+    totalPrice: number
+  ) => {
+    if (title && price && quantity) {
+      dispatch(
+        addToCart({
+          id: id,
+          title: title,
+          price: price,
+          image: image,
+          quantity,
+          totalPrice,
+        })
+      );
     }
   };
 
   const removeFromCartHandler = (id: number) => {
     dispatch(removeFromCart(id));
+  };
+
+  const checkoutHandler = () => {
+    toast.success("Checkout successful", {
+      position: toast.POSITION.TOP_CENTER,
+      autoClose: 2000,
+    });
   };
 
   return (
@@ -98,7 +107,16 @@ const CartDrawer = ({ onClose }: { onClose: () => void }) => {
                       strokeWidth={1.5}
                       stroke="currentColor"
                       className="w-4 h-4 mr-2 cursor-pointer"
-                      onClick={addToCartHandler}
+                      onClick={() =>
+                        addToCartHandler(
+                          item?.id,
+                          item.title,
+                          item.price,
+                          item.image,
+                          1,
+                          item.totalPrice
+                        )
+                      }
                     >
                       <path
                         strokeLinecap="round"
@@ -120,16 +138,20 @@ const CartDrawer = ({ onClose }: { onClose: () => void }) => {
             </div>
             <div className="flex flex-row items-start justify-between w-full">
               <p className="font-semibold">Total</p>
-              <p className="font-semibold">$ {totalPrice}</p>
+              <p className="font-semibold">$ {totalPrice.toFixed(2)}</p>
             </div>
             <div className="border border-gray-400 w-full" />
           </div>
           <div className="flex w-full mt-auto pt-4">
-            <button className="bg-orange-500 text-white text-lg rounded-md font-semibold w-full h-12">
+            <button
+              className="bg-orange-500 text-white text-lg rounded-md font-semibold w-full h-12"
+              onClick={checkoutHandler}
+            >
               Checkout
             </button>
           </div>
         </div>
+        <ToastContainer />
       </div>
     </>
   );
